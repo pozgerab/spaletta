@@ -9,10 +9,10 @@ const router = express.Router();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 const msg = {
   to: 'pozgerab@gmail.com', // Change to your recipient
-  from: 'pozgerab@gmail.com', // Change to your verified sender
+  from: 'spaletta.advent22@gmail.com', // Change to your verified sender
   subject: 'Sending with SendGrid is Fun',
   text: 'and easy to do anywhere, even with Node.js',
-  html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+  html: '<strong>EZ<br></br>MŰKÖDIK</strong>',
 }
 
 router.get('/', (req, res) => {
@@ -23,8 +23,7 @@ router.get('/', (req, res) => {
   })
   .catch((error) => {
     console.error(error)
-  })
-  console.log(process.env);*/
+  })*/
     res.render("index", {date: new Date(Date.now()).getDate()})
 });
 
