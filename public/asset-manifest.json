@@ -1,9 +1,10 @@
 {
   "files": {
-    "main.css": "/static/css/main.b778255d.css",
-    "main.js": "/static/js/main.3e520528.js",
+    "main.css": "/static/css/main.7ca6d599.css",
+    "main.js": "/static/js/main.93061495.js",
     "static/media/quest_avatar.png": "/static/media/quest_avatar.64b7442471c42911531f.png",
     "static/media/welcome.png": "/static/media/welcome.a3df09eaa17e031f6643.png",
+    "static/media/open.png": "/static/media/open.1d71bfa61de40b51580e.png",
     "static/media/12.png": "/static/media/12.31f087f71bf8450ab74d.png",
     "static/media/16.png": "/static/media/16.aa2b2cebe9785533b853.png",
     "static/media/19.png": "/static/media/19.089315c408236f23a8fa.png",
@@ -32,17 +33,17 @@
     "static/media/14.png": "/static/media/14.77346b3d8da5f9188a98.png",
     "static/media/11.png": "/static/media/11.08269bde331cc89a9d7a.png",
     "static/media/3.png": "/static/media/3.aaadd196aac73f070b28.png",
-    "static/media/open.png": "/static/media/open.bf5beac8cb02e1dea53a.png",
     "static/media/leaves.png": "/static/media/leaves.3fd5a5d224668e44648a.png",
     "static/media/user1.png": "/static/media/user1.e41d4214616018a2c5e5.png",
+    "static/media/blogpost.png": "/static/media/blogpost.944784f003947afc6141.png",
     "static/media/spaletta.png": "/static/media/spaletta.49bf65648697e76ade7d.png",
     "static/media/x_icon.png": "/static/media/x_icon.9d5d281ee6a39d1cd5be.png",
     "index.html": "/index.html",
-    "main.b778255d.css.map": "/static/css/main.b778255d.css.map",
-    "main.3e520528.js.map": "/static/js/main.3e520528.js.map"
+    "main.7ca6d599.css.map": "/static/css/main.7ca6d599.css.map",
+    "main.93061495.js.map": "/static/js/main.93061495.js.map"
   },
   "entrypoints": [
-    "static/css/main.b778255d.css",
-    "static/js/main.3e520528.js"
+    "static/css/main.7ca6d599.css",
+    "static/js/main.93061495.js"
   ]
 }

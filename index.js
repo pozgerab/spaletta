@@ -1,4 +1,4 @@
-import express from "express";
+import express, { json } from "express";
 import sgMail from '@sendgrid/mail'
 import fs from 'fs'
 
@@ -31,12 +31,12 @@ app.post('/sub', (req, res) => {
     to: req.query.mail, // Change to your recipient
     from: 'spaletta.advent22@gmail.com', // Change to your verified sender
     subject: 'Spaletta',
-    text: '',
-    html: `<strong>Szia ${name}!<br></br>Ha az nem működik, összefosom magam</strong>`,
+    text: 'thx for subbing',
+    html: `<strong>Szia ${name}!<br></br>Köszönjük hogy feliratkoztál</strong>`,
   }
 
   let responseMsg
-  sgMail.send(msg).then(() => {}).catch((err) => {
+  sgMail.send(msg).then(() => {console.log('Email sent')}).catch((err) => {
     responseMsg = err
     res.status(400).send({res: responseMsg}).end()
   })
@@ -49,19 +49,39 @@ app.post('/sub', (req, res) => {
   res.send(subData)
 })
 
-app.post('notify', (req, res) => {
+app.post('/notify', (req, res) => {
+  let days;
+  let date = new Date(Date.now()).getDate();
+  if (date > 25) {
+    days = 28-date;
+  } else {
+    days = date+(28-25)
+  }
   if (req.query.to === 'all') {
+    
     subData.map(user => {
+      
       const msg = {
         to: user.mail, // Change to your recipient
         from: 'spaletta.advent22@gmail.com', // Change to your verified sender
-        subject: 'Sending with SendGrid is Fun',
-        text: 'and easy to do anywhere, even with Node.js',
-        html: `<strong>Szia ${user.name}!<br></br>Ne felejtsd el a mai spalettát kinyitni!</strong>`,
+        subject: 'Spaletta',
+        text: 'dont forget your daily spaletta',
+        html: `Kedves ${user.name}!
+
+        Örülünk, hogy közösen készülhetünk az idei adventben!
+        
+        Ma egy újabb spalettát tárhatunk ki, Frizt nyomán keresve az Örömhírt saját kis világunkban.
+        
+        Kulcs a mai nyitáshoz:
+        
+        <a href='spaletta.tk#${days}'>
+        
+        
+        Szeretettel és imával,
+        Gergő, Balázs, Andris`,
       }
-      sgMail.send(msg).then(() => {}).catch((err) => {
-        responseMsg = err
-        res.status(400).send({res: responseMsg}).end()
+      sgMail.send(msg).then(data => {data.json()}).catch((err) => {
+        res.status(400).send({res: err}).end()
       })
     })
   } else if (req.query.to) {
@@ -69,11 +89,11 @@ app.post('notify', (req, res) => {
     const msg = {
       to: to.mail, // Change to your recipient
       from: 'spaletta.advent22@gmail.com', // Change to your verified sender
-      subject: 'Sending with SendGrid is Fun',
-      text: 'and easy to do anywhere, even with Node.js',
+      subject: 'Spaletta',
+      text: 'dont miss your daily spaletta',
       html: `<strong>Szia ${to.name}!<br></br>Ne felejtsd el a mai spalettát kinyitni!</strong>`,
     }
-    sgMail.send(msg).then(() => {}).catch((err) => {
+    sgMail.send(msg).then(data => {data.json()}).catch((err) => {
       responseMsg = err
       res.status(400).send({res: responseMsg}).end()
     })
