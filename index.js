@@ -27,6 +27,7 @@ app.post('/sub', (req, res) => {
   } else {
     name = 'User'
   }
+  console.log(req.query.mail);
   const msg = {
     to: req.query.mail, // Change to your recipient
     from: 'spaletta.advent22@gmail.com', // Change to your verified sender
@@ -60,7 +61,7 @@ app.post('/notify', (req, res) => {
   if (req.query.to === 'all') {
     
     subData.map(user => {
-      
+      console.log(user.mail)
       const msg = {
         to: user.mail, // Change to your recipient
         from: 'spaletta.advent22@gmail.com', // Change to your verified sender
@@ -74,7 +75,7 @@ app.post('/notify', (req, res) => {
         
         Kulcs a mai nyitáshoz:
         
-        <a href='spaletta.tk#${days}'>
+        <a href='spaletta.tk#${days}'><a>
         
         
         Szeretettel és imával,
@@ -85,7 +86,7 @@ app.post('/notify', (req, res) => {
       })
     })
   } else if (req.query.to) {
-    let to = subData.find(e => (e.name === req.query.to))
+    let to = subData.find(e => {return e.name === req.query.to})
     const msg = {
       to: to.mail, // Change to your recipient
       from: 'spaletta.advent22@gmail.com', // Change to your verified sender
@@ -94,8 +95,7 @@ app.post('/notify', (req, res) => {
       html: `<strong>Szia ${to.name}!<br></br>Ne felejtsd el a mai spalettát kinyitni!</strong>`,
     }
     sgMail.send(msg).then(data => {data.json()}).catch((err) => {
-      responseMsg = err
-      res.status(400).send({res: responseMsg}).end()
+      res.status(400).send({res: err}).end()
     })
   }
 })
