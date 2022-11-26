@@ -35,7 +35,6 @@ app.post('/sub', (req, res) => {
   } else {
     name = 'User'
   }
-  console.log(req.query.mail);
   const msg = {
     to: req.query.mail, // Change to your recipient
     from: 'spaletta.advent22@gmail.com', // Change to your verified sender
@@ -46,8 +45,7 @@ app.post('/sub', (req, res) => {
 
   let responseMsg
   sgMail.send(msg).then(() => {console.log('Email sent')}).catch((err) => {
-    responseMsg = err
-    res.status(400).send({res: responseMsg}).end()
+    res.status(400).send({res: err}).end()
   })
 
   subData.push({
