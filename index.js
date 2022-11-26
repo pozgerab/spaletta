@@ -1,6 +1,14 @@
 import express, { json } from "express";
 import sgMail from '@sendgrid/mail'
 import fs from 'fs'
+import cron from 'node-cron'
+
+const scheduleJob = cron.schedule('0 17 * * *', () => {
+  fetch('/notify?to=all').then(data => data.json()).catch(err => console.log(err));
+  console.log('Sending emails');
+});
+
+scheduleJob.start();
 
 let subData
 
@@ -33,7 +41,7 @@ app.post('/sub', (req, res) => {
     from: 'spaletta.advent22@gmail.com', // Change to your verified sender
     subject: 'Spaletta',
     text: 'thx for subbing',
-    html: `<strong>Szia ${name}!<br></br>Köszönjük hogy feliratkoztál</strong>`,
+    html: `Köszi a feliratkozást, mostantól minden nap találkozunk az idei adventben!`,
   }
 
   let responseMsg
@@ -51,35 +59,27 @@ app.post('/sub', (req, res) => {
 })
 
 app.post('/notify', (req, res) => {
-  let days;
-  let date = new Date(Date.now()).getDate();
-  if (date > 25) {
-    days = 28-date;
-  } else {
-    days = date+(28-25)
-  }
   if (req.query.to === 'all') {
     
-    subData.map(user => {
-      console.log(user.mail)
+    subData.map(to => {
       const msg = {
-        to: user.mail, // Change to your recipient
+        to: to.mail, // Change to your recipient
         from: 'spaletta.advent22@gmail.com', // Change to your verified sender
         subject: 'Spaletta',
         text: 'dont forget your daily spaletta',
-        html: `Kedves ${user.name}!
+        html: `Kedves ${to.name}!<br></br>
 
-        Örülünk, hogy közösen készülhetünk az idei adventben!
+        Örülünk, hogy közösen készülhetünk az idei adventben!<br></br>
         
-        Ma egy újabb spalettát tárhatunk ki, Frizt nyomán keresve az Örömhírt saját kis világunkban.
+        Ma egy újabb spalettát tárhatunk ki, Frizt nyomán keresve az Örömhírt saját kis világunkban.<br></br>
         
-        Kulcs a mai nyitáshoz:
+        Kulcs a mai nyitáshoz:<br></br>
         
-        <a href='spaletta.tk#${days}'><a>
+        <a href='spaletta.tk'><a><br></br>
         
         
-        Szeretettel és imával,
-        Gergő, Balázs, Andris`,
+        Szeretettel és imával,<br></br>
+        Gergő, Bazsi, Andris`,
       }
       sgMail.send(msg).then(data => {data.json()}).catch((err) => {
         res.status(400).send({res: err}).end()
@@ -91,8 +91,19 @@ app.post('/notify', (req, res) => {
       to: to.mail, // Change to your recipient
       from: 'spaletta.advent22@gmail.com', // Change to your verified sender
       subject: 'Spaletta',
-      text: 'dont miss your daily spaletta',
-      html: `<strong>Szia ${to.name}!<br></br>Ne felejtsd el a mai spalettát kinyitni!</strong>`,
+      text: 'dont forget your daily spaletta',
+      html: `Kedves ${to.name}!<br></br>
+
+      Örülünk, hogy közösen készülhetünk az idei adventben!<br></br>
+      
+      Ma egy újabb spalettát tárhatunk ki, Frizt nyomán keresve az Örömhírt saját kis világunkban.<br></br>
+      
+      Kulcs a mai nyitáshoz:<br></br>
+      
+      <a href='spaletta.tk'><a><br></br>
+      
+      Szeretettel és imával,<br></br>
+      Gergő, Bazsi, Andris`,
     }
     sgMail.send(msg).then(data => {data.json()}).catch((err) => {
       res.status(400).send({res: err}).end()
