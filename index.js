@@ -8,6 +8,8 @@ dotenv.config()
 
 let transporter = nodemailer.createTransport({
   service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
   secure: true,
   pool: true,
   auth: {
@@ -86,6 +88,7 @@ app.post('/notify', (req, res) => {
       transporter.sendMail(mailOptions, (err, data) => {
         if (err) console.log(err); else console.log('Mail sent');
       })
+      res.end();
     })
   } else if (req.query.to) {
     let to = subData.find(e => {return e.name === req.query.to})
@@ -111,6 +114,7 @@ app.post('/notify', (req, res) => {
     transporter.sendMail(mailOptions, (err, data) => {
       if (err) console.log(err); else console.log('Mail sent');
     })
+    res.end()
   }
 })
 
