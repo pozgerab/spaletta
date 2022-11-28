@@ -79,7 +79,7 @@ app.post('/notify', (req, res) => {
         
         Kulcs a mai nyitáshoz:<br></br>
         
-        <a href='spaletta.tk'></a><br></br>
+        <a href='spaletta.tk'>spaletta.tk</a><br></br>
         
         
         Szeretettel és imával,<br></br>
