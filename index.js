@@ -1,14 +1,23 @@
 import express, { json } from "express";
-import sgMail from '@sendgrid/mail'
 import fs from 'fs'
 import cron from 'node-cron'
+import dotenv from 'dotenv'
+import nodemailer from 'nodemailer'
 
-const scheduleJob = cron.schedule('0 17 * * *', () => {
+dotenv.config()
+
+let transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.MAIL,
+    pass: process.env.PASSWORD
+  }
+})
+
+cron.schedule('0 17 * * *', () => {
   fetch('/notify?to=all').then(data => data.json()).catch(err => console.log(err));
   console.log('Sending emails');
 });
-
-scheduleJob.start();
 
 let subData
 
@@ -23,11 +32,6 @@ app.use(express.static('public'));
 app.use( express.json() );
 app.set("view engine", "ejs");
 
-process.env.SENDGRID_API_KEY = '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';
-
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-
-
 app.post('/sub', (req, res) => {
   let name
   if (req.query.name) {
@@ -35,17 +39,15 @@ app.post('/sub', (req, res) => {
   } else {
     name = 'User'
   }
-  const msg = {
+  const mailOptions = {
     to: req.query.mail, // Change to your recipient
     from: 'spaletta.advent22@gmail.com', // Change to your verified sender
     subject: 'Spaletta',
     text: 'thx for subbing',
     html: `Köszi a feliratkozást, mostantól minden nap találkozunk az idei adventben!`,
   }
-
-  let responseMsg
-  sgMail.send(msg).then(() => {console.log('Email sent')}).catch((err) => {
-    res.status(400).send({res: err}).end()
+  transporter.sendMail(mailOptions, (err, data) => {
+    if (err) console.log(err); else console.log('Mail sent');
   })
 
   subData.push({
@@ -60,7 +62,7 @@ app.post('/notify', (req, res) => {
   if (req.query.to === 'all') {
     
     subData.map(to => {
-      const msg = {
+      const mailOptions = {
         to: to.mail, // Change to your recipient
         from: 'spaletta.advent22@gmail.com', // Change to your verified sender
         subject: 'Spaletta',
@@ -73,19 +75,19 @@ app.post('/notify', (req, res) => {
         
         Kulcs a mai nyitáshoz:<br></br>
         
-        <a href='spaletta.tk'><a><br></br>
+        <a href='spaletta.tk'></a><br></br>
         
         
         Szeretettel és imával,<br></br>
         Gergő, Bazsi, Andris`,
       }
-      sgMail.send(msg).then(data => {data.json()}).catch((err) => {
-        res.status(400).send({res: err}).end()
+      transporter.sendMail(mailOptions, (err, data) => {
+        if (err) console.log(err); else console.log('Mail sent');
       })
     })
   } else if (req.query.to) {
     let to = subData.find(e => {return e.name === req.query.to})
-    const msg = {
+    const mailOptions = {
       to: to.mail, // Change to your recipient
       from: 'spaletta.advent22@gmail.com', // Change to your verified sender
       subject: 'Spaletta',
@@ -98,13 +100,14 @@ app.post('/notify', (req, res) => {
       
       Kulcs a mai nyitáshoz:<br></br>
       
-      <a href='spaletta.tk'><a><br></br>
+      <a href='spaletta.tk'></a><br></br>
+      
       
       Szeretettel és imával,<br></br>
       Gergő, Bazsi, Andris`,
     }
-    sgMail.send(msg).then(data => {data.json()}).catch((err) => {
-      res.status(400).send({res: err}).end()
+    transporter.sendMail(mailOptions, (err, data) => {
+      if (err) console.log(err); else console.log('Mail sent');
     })
   }
 })
