@@ -18,11 +18,14 @@ let transporter = nodemailer.createTransport({
   }
 })
 
-cron.schedule('0 17 * * *', () => {
-  fetch('/notify?to=all').then(data => data.json()).catch(err => console.log(err));
-  console.log('Sending emails');
-});
 
+const job = cron.schedule('0 17 * * *', async () => {
+  try {
+    await fetch('/notify?to=all').then(data => data.json()).catch(err => console.log(err));
+  } catch(e) {}
+  console.log('Sending emails');
+}, {scheduled:true});
+job.start()
 let subData
 
 fs.readFile('./subs.json', 'utf8', function(err, data){
