@@ -8,10 +8,6 @@ dotenv.config()
 
 let transporter = nodemailer.createTransport({
   service: 'gmail',
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
-  pool: true,
   auth: {
     user: process.env.MAIL,
     pass: process.env.PASSWORD
@@ -21,10 +17,10 @@ let transporter = nodemailer.createTransport({
 
 const job = cron.schedule('0 17 * * *', async () => {
   try {
-    await fetch('/notify?to=all').then(data => data.json()).catch(err => console.log(err));
+    notify('all')
   } catch(e) {}
   console.log('Sending emails');
-}, {scheduled:true});
+}, {scheduled:true, timezone: "Europe/Budapest"});
 job.start()
 let subData
 
@@ -39,6 +35,14 @@ app.use(express.static('public'));
 app.use( express.json() );
 app.set("view engine", "ejs");
 
+app.post('/sendmail', (req, res) => {
+  let msg = ''
+  msg = req.body.msg;
+  msg = msg.replaceAll("_", '<br></br>');
+  msg = msg.replace("#","<a href=\"spaletta.tk\">spaletta.tk</a>")
+  notify(req.body.to, msg);
+});
+
 app.post('/sub', (req, res) => {
   let name
   if (req.query.name) {
@@ -51,7 +55,7 @@ app.post('/sub', (req, res) => {
     from: 'spaletta.advent22@gmail.com', // Change to your verified sender
     subject: 'Spaletta',
     text: 'thx for subbing',
-    html: `Köszi a feliratkozást, mostantól minden nap találkozunk az idei adventben!`,
+    html: `Köszönjük a feliratkozást, mostantól minden nap találkozunk az idei adventben!`,
   }
   transporter.sendMail(mailOptions, (err, data) => {
     if (err) console.log(err); else console.log('Mail sent');
@@ -65,8 +69,8 @@ app.post('/sub', (req, res) => {
   res.send(subData)
 })
 
-app.post('/notify', (req, res) => {
-  if (req.query.to === 'all') {
+function notify(mailTo, msg) {
+  if (mailTo === 'all') {
     
     subData.map(to => {
       const mailOptions = {
@@ -74,51 +78,48 @@ app.post('/notify', (req, res) => {
         from: 'spaletta.advent22@gmail.com', // Change to your verified sender
         subject: 'Spaletta',
         text: 'dont forget your daily spaletta',
-        html: `Kedves ${to.name}!<br></br>
+        html: msg || `Kedves ${to.name}!
 
-        Örülünk, hogy közösen készülhetünk az idei adventben!<br></br>
+        Örülünk, hogy közösen készülhetünk az idei adventben!
         
-        Ma egy újabb spalettát tárhatunk ki, Frizt nyomán keresve az Örömhírt saját kis világunkban.<br></br>
+        Ma egy újabb spalettát tárhatunk ki, Fritz nyomán keresve az Örömhírt saját kis világunkban.
         
-        Kulcs a mai nyitáshoz:<br></br>
+        <a href=\"spaletta.tk\">spaletta.tk</a>
         
-        <a href='spaletta.tk'>spaletta.tk</a><br></br>
-        
-        
-        Szeretettel és imával,<br></br>
+        Szeretettel és imával,
         Gergő, Bazsi, Andris`,
       }
       transporter.sendMail(mailOptions, (err, data) => {
         if (err) console.log(err); else console.log('Mail sent');
       })
-      res.end();
     })
-  } else if (req.query.to) {
-    let to = subData.find(e => {return e.name === req.query.to})
+  } else if (mailTo) {
+    let to = subData.find(e => {return e.name === mailTo})
     const mailOptions = {
       to: to.mail, // Change to your recipient
       from: 'spaletta.advent22@gmail.com', // Change to your verified sender
       subject: 'Spaletta',
       text: 'dont forget your daily spaletta',
-      html: `Kedves ${to.name}!<br></br>
+      html: msg || `Kedves ${to.name}!
 
-      Örülünk, hogy közösen készülhetünk az idei adventben!<br></br>
+      Örülünk, hogy közösen készülhetünk az idei adventben!
       
-      Ma egy újabb spalettát tárhatunk ki, Frizt nyomán keresve az Örömhírt saját kis világunkban.<br></br>
+      Ma egy újabb spalettát tárhatunk ki, Fritz nyomán keresve az Örömhírt saját kis világunkban.
       
-      Kulcs a mai nyitáshoz:<br></br>
+      <a href=\"spaletta.tk\">spaletta.tk</a>
       
-      <a href='spaletta.tk'></a><br></br>
-      
-      
-      Szeretettel és imával,<br></br>
+      Szeretettel és imával,
       Gergő, Bazsi, Andris`,
     }
     transporter.sendMail(mailOptions, (err, data) => {
       if (err) console.log(err); else console.log('Mail sent');
     })
-    res.end()
   }
+}
+
+app.post('/notify', (req, res) => {
+  notify(req.query.to)
+  res.end()
 })
 
 app.get('/', (req, res) => {
