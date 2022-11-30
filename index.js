@@ -8,6 +8,7 @@ dotenv.config()
 
 let transporter = nodemailer.createTransport({
   service: 'gmail',
+  pool: true,
   auth: {
     user: process.env.MAIL,
     pass: process.env.PASSWORD
@@ -41,6 +42,7 @@ app.post('/sendmail', (req, res) => {
   msg = msg.replaceAll("_", '<br></br>');
   msg = msg.replace("#","<a href=\"spaletta.tk\">spaletta.tk</a>")
   notify(req.body.to, msg);
+  res.end()
 });
 
 app.post('/sub', (req, res) => {
