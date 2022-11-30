@@ -9,6 +9,7 @@ dotenv.config()
 let transporter = nodemailer.createTransport({
   service: 'gmail',
   pool: true,
+  dnsTimeOut: 100,
   auth: {
     user: process.env.MAIL,
     pass: process.env.PASSWORD
@@ -81,14 +82,14 @@ function notify(mailTo, msg) {
       from: 'spaletta.advent22@gmail.com', // Change to your verified sender
       subject: 'Spaletta',
       text: 'dont forget your daily spaletta',
-      html: msg || `Kedves Spalettanyitogató!
-      Örülünk, hogy közösen készülhetünk az idei adventben!
+      html: msg || `Kedves Spalettanyitogató!<br></br>
+      Örülünk, hogy közösen készülhetünk az idei adventben!<br></br>
       
-      Ma egy újabb spalettát tárhatunk ki, Fritz nyomán keresve az Örömhírt saját kis világunkban.
+      Ma egy újabb spalettát tárhatunk ki, Fritz nyomán keresve az Örömhírt saját kis világunkban.<br></br>
       
-      <a href=\"spaletta.tk\">spaletta.tk</a>
+      <a href=\"spaletta.tk\">spaletta.tk</a><br></br>
       
-      Szeretettel és imával,
+      Szeretettel és imával,<br></br>
       Gergő, Bazsi, Andris`,
     }
     transporter.sendMail(mailOptions, (err, data) => {
@@ -101,15 +102,15 @@ function notify(mailTo, msg) {
       from: 'spaletta.advent22@gmail.com', // Change to your verified sender
       subject: 'Spaletta',
       text: 'dont forget your daily spaletta',
-      html: msg || `Kedves ${to.name}!
+      html: msg || `Kedves ${to.name}!<br></br>
 
-      Örülünk, hogy közösen készülhetünk az idei adventben!
+      Örülünk, hogy közösen készülhetünk az idei adventben!<br></br>
       
-      Ma egy újabb spalettát tárhatunk ki, Fritz nyomán keresve az Örömhírt saját kis világunkban.
+      Ma egy újabb spalettát tárhatunk ki, Fritz nyomán keresve az Örömhírt saját kis világunkban.<br></br>
       
-      <a href=\"spaletta.tk\">spaletta.tk</a>
+      <a href=\"spaletta.tk\">spaletta.tk</a><br></br>
       
-      Szeretettel és imával,
+      Szeretettel és imával,<br></br>
       Gergő, Bazsi, Andris`,
     }
     transporter.sendMail(mailOptions, (err, data) => {
