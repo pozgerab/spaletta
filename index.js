@@ -9,7 +9,7 @@ dotenv.config()
 let transporter = nodemailer.createTransport({
   service: 'gmail',
   pool: true,
-  dnsTimeOut: 100,
+  dnsTimeOut: 200,
   auth: {
     user: process.env.MAIL,
     pass: process.env.PASSWORD
@@ -74,7 +74,7 @@ app.post('/sub', (req, res) => {
 
 function notify(mailTo, msg) {
   if (mailTo === 'all') {
-    
+
     subData.map(to => {
       const mailOptions = {
         to: to.mail, // Change to your recipient
