@@ -75,26 +75,26 @@ app.post('/sub', (req, res) => {
 function notify(mailTo, msg) {
   if (mailTo === 'all') {
     
-    let mails = subData.map(to => to.mail);
-    console.log(mails)
-    const mailOptions = {
-      to: mails, // Change to your recipient
-      from: 'spaletta.advent22@gmail.com', // Change to your verified sender
-      subject: 'Spaletta',
-      text: 'dont forget your daily spaletta',
-      html: msg || `Kedves Spalettanyitogató!<br></br>
-      Örülünk, hogy közösen készülhetünk az idei adventben!<br></br>
-      
-      Ma egy újabb spalettát tárhatunk ki, Fritz nyomán keresve az Örömhírt saját kis világunkban.<br></br>
-      
-      <a href=\"spaletta.tk\">spaletta.tk</a><br></br>
-      
-      Szeretettel és imával,<br></br>
-      Gergő, Bazsi, Andris`,
-    }
-    transporter.sendMail(mailOptions, (err, data) => {
-      if (err) console.log(err); else console.log('Mail sent');
-    })
+    subData.map(to => {
+      const mailOptions = {
+        to: to.mail, // Change to your recipient
+        from: 'spaletta.advent22@gmail.com', // Change to your verified sender
+        subject: 'Spaletta',
+        text: 'dont forget your daily spaletta',
+        html: msg || `Kedves ${to.name}!<br></br>
+        Örülünk, hogy közösen készülhetünk az idei adventben!<br></br>
+
+        Ma egy újabb spalettát tárhatunk ki, Fritz nyomán keresve az Örömhírt saját kis világunkban.<br></br>
+
+        <a href=\"spaletta.tk\">spaletta.tk</a><br></br>
+
+        Szeretettel és imával,<br></br>
+        Gergő, Bazsi, Andris`,
+      }
+      transporter.sendMail(mailOptions, (err, data) => {
+        if (err) console.log(err); else console.log(`Mail sent to ${to.name}`);
+      })
+    });
   } else if (mailTo) {
     let to = subData.find(e => {return e.name === mailTo})
     const mailOptions = {
