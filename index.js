@@ -22,8 +22,8 @@ const job = cron.schedule('0 17 * * *', async () => {
     notify('all')
   } catch(e) {}
   console.log('Sending emails');
-}, {scheduled:true, timezone: "Europe/Budapest"});
-job.start()
+}, {scheduled:false, timezone: "Europe/Budapest"});
+//job.start()
 let subData
 
 fs.readFile('./subs.json', 'utf8', function(err, data){
